@@ -1,37 +1,35 @@
 #include <concepts>
 #include <cstddef>
 #include <functional>
-#include <string>
+#include <set>
+#include <vector>
 
-// Declaration of the concept “Hashable”, which is satisfied by any type “T”
-// such that for values “a” of type “T”, the expression std::hash<T>{}(a)
-// compiles and its result is convertible to std::size_t
-template <typename T>
-concept Hashable = requires(T a) {
-  { std::hash<T>{}(a) } -> std::convertible_to<std::size_t>;
-};
+// Without this HasPushBack, the compiler will produces error about redefinition
+// of add()
+template <typename CollT>
+concept HasPushBack =
+    requires(CollT c, CollT::value_type v) { c.push_back(v); };
 
-struct Meow {};
+template <typename CollT, typename T>
+  requires HasPushBack<CollT>
+void add(CollT &coll, const T &val) {
+  coll.push_back(val);
+}
 
-// Constrained C++20 function template:
-template <Hashable T> void f(T) {}
-//
-// Alternative ways to apply the same constraint:
-// template<typename T>
-//     requires Hashable<T>
-// void f(T) {}
-//
-// template<typename T>
-// void f(T) requires Hashable<T> {}
-//
-// void f(Hashable auto /* parameter-name */) {}
+template <typename CollT, typename T> void add(CollT &coll, const T &val) {
+  coll.insert(val);
+}
 
 int main() {
-  using std::operator""s;
+  std::vector<int> coll1;
+  std::set<int> coll2;
 
-  auto str = "abc"s; // str is a std::string
-  auto meow = Meow{};
+  // Use static_assert to test whether a concept is satisfied or not.
+  // We should treat these checks as UT.
+  static_assert(HasPushBack<std::vector<int>>);
+  static_assert(!HasPushBack<std::set<int>>);
 
-  f(str); // OK, std::string satisfies Hashable
-  // f(meow); // Error, meow does not satisfy Hashable
+  add(coll1, 42);
+  add(coll2, 42);
+  return 0;
 }
