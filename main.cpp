@@ -4,21 +4,22 @@
 #include <set>
 #include <vector>
 
-// Without this HasPushBack, the compiler will produces error about redefinition
-// of add()
 template <typename CollT>
 concept HasPushBack =
     requires(CollT c, CollT::value_type v) { c.push_back(v); };
 
-template <typename CollT, typename T>
-  requires HasPushBack<CollT>
-void add(CollT &coll, const T &val) {
-  coll.push_back(val);
-}
+// The following does not work,
+// because decltype(coll) is std::vector<int>& rather than std::vector<int>
+//
+// void add(auto &coll, const auto &val)
+//   requires HasPushBack<decltype(coll)>
+// {
+//   coll.push_back(val);
+// }
 
-template <typename CollT, typename T> void add(CollT &coll, const T &val) {
-  coll.insert(val);
-}
+void add(HasPushBack auto &coll, const auto &val) { coll.push_back(val); }
+
+void add(auto &coll, const auto &val) { coll.insert(val); }
 
 int main() {
   std::vector<int> coll1;
