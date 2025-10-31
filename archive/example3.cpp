@@ -8,7 +8,7 @@ template <typename CollT>
 concept HasPushBack =
     requires(CollT c, CollT::value_type v) { c.push_back(v); };
 
-// The following does not work,
+// This does not work,
 // because decltype(coll) is std::vector<int>& rather than std::vector<int>
 //
 // void add(auto &coll, const auto &val)
@@ -17,7 +17,12 @@ concept HasPushBack =
 //   coll.push_back(val);
 // }
 
-void add(HasPushBack auto &coll, const auto &val) { coll.push_back(val); }
+// This works
+void add(auto &coll, const auto &val)
+  requires HasPushBack<std::remove_cvref_t<decltype(coll)>>
+{
+  coll.push_back(val);
+}
 
 void add(auto &coll, const auto &val) { coll.insert(val); }
 
