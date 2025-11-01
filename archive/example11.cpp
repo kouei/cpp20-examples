@@ -18,7 +18,7 @@ public:
   }
 
   bool isEmpty() const
-    requires requires { value.empty(); }
+    requires(requires { value.empty(); })
   {
     return value.empty();
   }
