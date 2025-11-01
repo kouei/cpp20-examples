@@ -16,20 +16,26 @@ public:
   {
     return value == 0;
   }
+
+  bool isEmpty() const
+    requires requires { value.empty(); }
+  {
+    return value.empty();
+  }
 };
 
 int main() {
   auto mt1 = MyType<double>{3.14};
 
-  mt1.print();        // OK
-  if (mt1.isZero()) { // OK
-    std::cout << "mt1 is zero" << "\n";
-  }
+  mt1.print(); // OK
+  // if (mt1.isZero()) // OK
+  // if (mt1.isEmpty()) // Error
 
   auto mt2 = MyType<std::string>{"abc"};
 
   mt2.print(); // OK
   // if(mt2.isZero()) // Error
+  // if(mt2.isEmpty()) // OK
 
   return 0;
 }
