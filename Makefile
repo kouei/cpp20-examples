@@ -9,13 +9,16 @@ ARTIFACTS := main
 main: $(SRC_DIR)/*
 	clang++ $(SRC_DIR)/$(MAIN_SRC) $(CPP_FLAG) -o $@
 
-.PHONY: clang-tidy clang-format clean
+.PHONY: tidy format run clean
 
 tidy:
 	clang-tidy $(ALL_SRC) -- $(CPP_STD)
 
 format:
 	clang-format -i $(ALL_SRC)
+
+run:
+	@./main
 
 clean:
 	rm -f $(ARTIFACTS)
