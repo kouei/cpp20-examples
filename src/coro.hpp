@@ -9,18 +9,18 @@
 //  http://creativecommons.org/licenses/by/4.0/
 //********************************************************
 
-#include "coro.hpp"
+#include "corotask.hpp" // for CoroTask
 #include <iostream>
 
-int main() {
-  // start coroutine:
-  auto coroTask = coro(3); // initialize coroutine
-  std::cout << "coro() started\n";
+CoroTask coro(int max) {
+  std::cout << "         CORO " << max << " start\n";
 
-  // loop to resume the coroutine until it is done:
-  while (coroTask.resume()) { // RESUME
-    std::cout << "coro() suspended\n";
+  for (int val = 1; val <= max; ++val) {
+    // print next value:
+    std::cout << "         CORO " << val << '/' << max << '\n';
+
+    co_await std::suspend_always{}; // SUSPEND
   }
 
-  std::cout << "coro() done\n";
+  std::cout << "         CORO " << max << " end\n";
 }
