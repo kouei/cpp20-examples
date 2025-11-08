@@ -6,7 +6,7 @@
 class [[nodiscard]] CoroTask {
 public:
   // initialize members for state and customization:
-  struct promise_type; // definition later in corotaskpromise.hpp
+  struct promise_type;
   using CoroHdl = std::coroutine_handle<promise_type>;
 
 private:
